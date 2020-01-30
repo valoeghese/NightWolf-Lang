@@ -1,0 +1,7 @@
+package tk.valoeghese;
+
+using core.system;
+
+func main = (val[] args) -> {
+	"Hello, World!" -> system.println;
+};
