@@ -3,6 +3,7 @@ package tk.valoeghese.nightwolf.compiler.component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 
@@ -102,6 +103,7 @@ public abstract class Component implements Iterable<Component> {
 		private int line = 1;
 		private int column = 1;
 		private int current = 0;
+		private Stack<Integer> edits = new Stack<>();
 		private final char[] text;
 
 		public char advance() throws SyntaxError {
@@ -109,10 +111,12 @@ public abstract class Component implements Iterable<Component> {
 				char c = this.text[this.current++];
 
 				if (c == '\n') {
-					++line;
+					++this.line;
+					this.edits.push(this.column);
 					this.column = 1;
 				} else if (Character.isISOControl(c)) {
 					++this.column;
+					this.edits.push(0);
 				}
 
 				return c;
@@ -121,12 +125,70 @@ public abstract class Component implements Iterable<Component> {
 			}
 		}
 
+		public boolean rewind() {
+			if (this.current > 0) {
+				return false;
+			}
+
+			--this.current;
+
+			int edit = this.edits.pop();
+
+			if (edit == 0) {
+				this.column--;
+			} else {
+				--this.line;
+				this.column = edit;
+			}
+
+			return true;
+		}
+
 		public int getLine() {
 			return this.line;
 		}
 
 		public int getColumn() {
 			return this.column;
+		}
+	}
+
+	/**
+	 * Typical procession to the next whitespace character, ignoring and appending leading whitespace.
+	 */
+	public static void proceed(StringBuilder sb, Cursor cursor) {
+		char c;
+
+		while (!Character.isWhitespace(c = cursor.advance()) || sb.toString().trim().isEmpty()) {
+			if (c == '\u0000') {
+				throw SyntaxError.eof(cursor);
+			}
+
+			sb.append(c);
+		}
+	}
+
+	public static void proceedNonWhitespace(StringBuilder sb, char target, Cursor cursor) {
+		char c;
+
+		while ((c = cursor.advance()) != target) {
+			if (c == '\u0000') {
+				throw SyntaxError.eof(cursor);
+			}
+
+			sb.append(c);
+		}
+	}
+
+	public static void skipPast(char target, Cursor cursor) {
+		char c = (char) ((int) target + 1);
+
+		for (; c != target;) {
+			c = cursor.advance();
+
+			if (c == '\u0000') {
+				throw SyntaxError.eof(cursor);
+			}
 		}
 	}
 }

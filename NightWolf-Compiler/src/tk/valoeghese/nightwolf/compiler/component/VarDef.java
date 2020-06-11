@@ -36,28 +36,20 @@ public class VarDef extends Component {
 		this.addData(this.type.name);
 
 		StringBuilder sb = new StringBuilder();
-		char c;
-
-		while (!Character.isWhitespace(c = cursor.advance()) || sb.toString().trim().isEmpty()) {
-			sb.append(c);
-		}
+		Component.proceed(sb, cursor);
 
 		String name = sb.toString().trim();
 		this.addData(name);
 
 		// get next equals for value
-		for (; c != '=';) {
-			c = cursor.advance();
-		}
+		Component.skipPast('=', cursor);
 
 		Component value = this.type.createValue();
 		value.tokenise(cursor);
 		this.addComponent(value);
 
 		// get next semicolon for end
-		for (; c != ';';) {
-			c = cursor.advance();
-		}
+		Component.skipPast(';', cursor);
 	}
 
 	public static boolean isVarType(String name) {
