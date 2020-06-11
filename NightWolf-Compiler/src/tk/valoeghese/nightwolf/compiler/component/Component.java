@@ -21,7 +21,7 @@ public abstract class Component implements Iterable<Component> {
 	 * Parse the current string of text, up until the section is over.
 	 * @param cursor the characters to parse from; holds useful data about it as well.
 	 */
-	public abstract void parse(Cursor cursor) throws SyntaxError;
+	public abstract void tokenise(Cursor cursor) throws SyntaxError;
 
 	protected void reset() {
 		this.subComponents.clear();

@@ -16,7 +16,7 @@ public abstract class SingleReadingComponent extends Component {
 	private final boolean trimPrecedingWhitespace;
 
 	@Override
-	public void parse(Cursor cursor) throws SyntaxError {
+	public void tokenise(Cursor cursor) throws SyntaxError {
 		this.reset();
 		StringBuilder pkg = new StringBuilder();
 		char c;

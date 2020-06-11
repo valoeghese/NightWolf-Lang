@@ -14,14 +14,14 @@ public final class NightWolfProgram extends Component {
 
 		Cursor cursor = new Cursor(fileData.toCharArray());
 
-		// stage 1: parsing 1/2
+		// stage 1: tokeniser
 		// don't even make notes about fields etc. yet, that is the second stage
 		// the last (third) stage is the compile stage, which is done with ASM.
-		this.parse(cursor);
+		this.tokenise(cursor);
 	}
 
 	@Override
-	public void parse(Cursor cursor) throws SyntaxError {
+	public void tokenise(Cursor cursor) throws SyntaxError {
 		this.reset();
 
 		StringBuilder sb = new StringBuilder();
@@ -37,12 +37,12 @@ public final class NightWolfProgram extends Component {
 						switch (type) {
 						case "package":
 							PackageDef pkg = new PackageDef();
-							pkg.parse(cursor);
+							pkg.tokenise(cursor);
 							this.addComponent(pkg);
 							break;
 						case "using":
 							ImportDef using = new ImportDef();
-							using.parse(cursor);
+							using.tokenise(cursor);
 							this.addComponent(using);
 							break;
 						default:
@@ -57,7 +57,7 @@ public final class NightWolfProgram extends Component {
 						default:
 							if (VarDef.isVarType(type)) {
 								VarDef variable = new VarDef(type);
-								variable.parse(cursor);
+								variable.tokenise(cursor);
 								this.addComponent(variable);
 							} else {
 								throw SyntaxError.unexpectedToken(type, cursor);

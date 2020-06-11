@@ -8,6 +8,6 @@ public class FuncValue extends Component {
 	}
 
 	@Override
-	public void parse(Cursor cursor) throws SyntaxError {
+	public void tokenise(Cursor cursor) throws SyntaxError {
 	}
 }

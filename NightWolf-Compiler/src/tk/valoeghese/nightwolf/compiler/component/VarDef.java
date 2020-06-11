@@ -31,7 +31,7 @@ public class VarDef extends Component {
 	}
 
 	@Override
-	public void parse(Cursor cursor) throws SyntaxError {
+	public void tokenise(Cursor cursor) throws SyntaxError {
 		this.reset();
 		this.addData(this.type.name);
 
@@ -51,7 +51,7 @@ public class VarDef extends Component {
 		}
 
 		Component value = this.type.createValue();
-		value.parse(cursor);
+		value.tokenise(cursor);
 		this.addComponent(value);
 
 		// get next semicolon for end
