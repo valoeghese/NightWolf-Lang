@@ -33,7 +33,7 @@ public class Component implements Iterable<Component> {
 
 	@Override
 	public Iterator<Component> iterator() {
-		return new Iter(this.subComponents);
+		return this.subComponents.iterator();
 	}
 
 	@Override
@@ -75,26 +75,5 @@ public class Component implements Iterable<Component> {
 		}
 
 		return result.toString();
-	}
-
-	private static class Iter implements Iterator<Component> {
-		public Iter(List<Component> components) {
-			this.components = components;
-			this.firstInvalidIndex = components.size();
-		}
-
-		private final List<Component> components;
-		private final int firstInvalidIndex;
-		private int next = 0;
-
-		@Override
-		public boolean hasNext() {
-			return this.next < this.firstInvalidIndex;
-		}
-
-		@Override
-		public Component next() {
-			return this.components.get(this.next++);
-		}
 	}
 }
