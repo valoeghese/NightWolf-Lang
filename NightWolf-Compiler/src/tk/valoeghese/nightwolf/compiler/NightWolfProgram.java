@@ -6,13 +6,13 @@ import java.io.IOException;
 import tk.valoeghese.nightwolf.compiler.component.Component;
 import tk.valoeghese.nightwolf.compiler.component.ImportDef;
 import tk.valoeghese.nightwolf.compiler.component.PackageDef;
+import tk.valoeghese.nightwolf.compiler.component.VarDef;
 
 public final class NightWolfProgram extends Component {
 	public NightWolfProgram(String fileData) {
 		super("Program", true);
 
 		Cursor cursor = new Cursor(fileData.toCharArray());
-		StringBuilder sb = new StringBuilder();
 
 		// stage 1: parsing 1/2
 		// don't even make notes about fields etc. yet, that is the second stage
@@ -26,25 +26,48 @@ public final class NightWolfProgram extends Component {
 
 		StringBuilder sb = new StringBuilder();
 		char c;
+		String type;
+		boolean head = true;
 
 		while ((c = cursor.advance()) != '\u0000') {
 			if (Character.isWhitespace(c)) {
-				String type = sb.toString();
+				if (!(type = sb.toString()).isEmpty()) {
+					// head parts, such as 'package', and 'using'.
+					if (head) {
+						switch (type) {
+						case "package":
+							PackageDef pkg = new PackageDef();
+							pkg.parse(cursor);
+							this.addComponent(pkg);
+							break;
+						case "using":
+							ImportDef using = new ImportDef();
+							using.parse(cursor);
+							this.addComponent(using);
+							break;
+						default:
+							head = false;
+							break;
+						}
+					}
 
-				switch (type) {
-				case "package":
-					PackageDef pkg = new PackageDef();
-					pkg.parse(cursor);
-					this.addComponent(pkg);
-					break;
-				case "using":
-					ImportDef using = new ImportDef();
-					using.parse(cursor);
-					this.addComponent(using);
-					break;
+					// in case it's switching out of head mode and falling back from earlier (see default block), don't use else.s
+					if (!head) {
+						switch (type) {
+						default:
+							if (VarDef.isVarType(type)) {
+								VarDef variable = new VarDef(type);
+								variable.parse(cursor);
+								this.addComponent(variable);
+							} else {
+								throw SyntaxError.unexpectedToken(type, cursor);
+							}
+							break;
+						}
+					}
+
+					sb = new StringBuilder();
 				}
-
-				sb = new StringBuilder();
 			} else {
 				sb.append(c);
 			}

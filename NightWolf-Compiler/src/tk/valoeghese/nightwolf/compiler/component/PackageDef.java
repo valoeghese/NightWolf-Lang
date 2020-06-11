@@ -2,7 +2,7 @@ package tk.valoeghese.nightwolf.compiler.component;
 
 public class PackageDef extends SingleReadingComponent {
 	public PackageDef() {
-		super("PackageDef", false, ';');
+		super("PackageDef", false, ';', true);
 	}
 
 	public String getPackage() {

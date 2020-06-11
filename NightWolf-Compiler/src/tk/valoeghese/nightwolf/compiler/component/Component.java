@@ -44,6 +44,10 @@ public abstract class Component implements Iterable<Component> {
 		this.subComponents.add(c);
 	}
 
+	protected Component getComponent(int index) {
+		return this.subComponents.get(index);
+	}
+
 	@Override
 	public Iterator<Component> iterator() {
 		return this.subComponents.iterator();

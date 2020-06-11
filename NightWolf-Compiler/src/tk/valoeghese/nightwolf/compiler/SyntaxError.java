@@ -21,4 +21,8 @@ public class SyntaxError extends RuntimeException {
 	public static SyntaxError invalidCharacter(char c, Cursor cursor) {
 		return new SyntaxError("Found invalid character! '" + c + "'", cursor);
 	}
+
+	public static SyntaxError unexpectedToken(String token, Cursor cursor) {
+		return new SyntaxError("Unexpected Token: \"" + token + "\"", cursor);
+	}
 }

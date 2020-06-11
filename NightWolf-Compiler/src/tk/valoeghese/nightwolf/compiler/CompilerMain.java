@@ -10,6 +10,7 @@ import tk.valoeghese.common.ArgsData;
 import tk.valoeghese.common.ArgsParser;
 import tk.valoeghese.common.IProgramArgs;
 import tk.valoeghese.common.util.FileUtils;
+import tk.valoeghese.nightwolf.compiler.component.VarDef;
 
 public final class CompilerMain implements IProgramArgs, Runnable {
 	public File sourceFile;
@@ -23,6 +24,9 @@ public final class CompilerMain implements IProgramArgs, Runnable {
 
 	@Override
 	public void run() {
+		// make sure VarDef.Type is initialised
+		VarDef.Type.FUNC.equals(null);
+
 		if (sourceFile.isDirectory()) {
 			FileUtils.trailFilesOfExtension(this.sourceFile, "nw", (file, trail) -> {
 				try {
