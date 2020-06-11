@@ -38,8 +38,7 @@ public final class CompilerMain implements IProgramArgs, Runnable {
 			try {
 				fileData = new String(Files.readAllBytes(this.sourceFile.toPath()));
 				NightWolfProgram program = new NightWolfProgram(fileData);
-				//System.out.println(program.getPackage());
-				//debugEach(program.getImports(), System.out::println);
+				System.out.println(program);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}

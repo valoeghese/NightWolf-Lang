@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Component implements Iterable<Component> {
+import tk.valoeghese.nightwolf.compiler.SyntaxError;
+
+public abstract class Component implements Iterable<Component> {
 	public Component(String name, boolean container) {
 		this.name = name;
 		this.container = container;
@@ -15,6 +17,17 @@ public class Component implements Iterable<Component> {
 	private final List<Component> subComponents = new ArrayList<>();
 	private final List<String> data = new ArrayList<>();
 
+	/**
+	 * Parse the current string of text, up until the section is over.
+	 * @param cursor the characters to parse from; holds useful data about it as well.
+	 */
+	public abstract void parse(Cursor cursor) throws SyntaxError;
+
+	protected void reset() {
+		this.subComponents.clear();
+		this.data.clear();
+	}
+
 	protected void addData(String data) {
 		this.data.add(data);
 	}
@@ -23,7 +36,7 @@ public class Component implements Iterable<Component> {
 		return this.data.get(index);
 	}
 
-	public void addComponent(Component c) throws UnsupportedOperationException {
+	protected void addComponent(Component c) throws UnsupportedOperationException {
 		if (!this.container) {
 			throw new UnsupportedOperationException("Component " + this.name + " not a container!");
 		}
@@ -75,5 +88,41 @@ public class Component implements Iterable<Component> {
 		}
 
 		return result.toString();
+	}
+
+	public static class Cursor {
+		public Cursor(char[] text) {
+			this.text = text;
+		}
+
+		private int line = 1;
+		private int column = 1;
+		private int current = 0;
+		private final char[] text;
+
+		public char advance() throws SyntaxError {
+			try {
+				char c = this.text[this.current++];
+
+				if (c == '\n') {
+					++line;
+					this.column = 1;
+				} else if (Character.isISOControl(c)) {
+					++this.column;
+				}
+
+				return c;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return '\u0000';
+			}
+		}
+
+		public int getLine() {
+			return this.line;
+		}
+
+		public int getColumn() {
+			return this.column;
+		}
 	}
 }
