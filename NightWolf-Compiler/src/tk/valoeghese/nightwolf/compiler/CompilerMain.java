@@ -11,7 +11,7 @@ import tk.valoeghese.common.ArgsParser;
 import tk.valoeghese.common.IProgramArgs;
 import tk.valoeghese.common.util.FileUtils;
 
-public final class Main implements IProgramArgs, Runnable {
+public final class CompilerMain implements IProgramArgs, Runnable {
 	public File sourceFile;
 
 	@Override
@@ -38,25 +38,24 @@ public final class Main implements IProgramArgs, Runnable {
 			try {
 				fileData = new String(Files.readAllBytes(this.sourceFile.toPath()));
 				NightWolfProgram program = new NightWolfProgram(fileData);
-				System.out.println(program.getPackage());
-				forEach(program.getImports(), System.out::println);
+				//System.out.println(program.getPackage());
+				//debugEach(program.getImports(), System.out::println);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
 		}
 	}
-	
-	private static <T> void forEach(T[] array, Consumer<T> cb) {
+
+	private static <T> void debugEach(T[] array, Consumer<T> cb) {
 		for (T i : array) {
 			cb.accept(i);
 		}
 	}
 
 	public static void main(String[] args) {
-		instance = new Main();
-		Thread mainThread = new Thread(ArgsParser.of(args, instance));
-		mainThread.start();
+		instance = new CompilerMain();
+		ArgsParser.of(args, instance).run();
 	}
 
-	public static Main instance;
+	public static CompilerMain instance;
 }
