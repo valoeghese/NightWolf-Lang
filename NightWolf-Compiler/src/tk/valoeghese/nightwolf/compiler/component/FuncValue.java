@@ -1,7 +1,13 @@
 package tk.valoeghese.nightwolf.compiler.component;
 
-public class FuncValue extends SingleReadingComponent {
+import tk.valoeghese.nightwolf.compiler.SyntaxError;
+
+public class FuncValue extends Component {
 	public FuncValue() {
-		super("FuncValue", true, '}', true);
+		super("FuncValue", true);
+	}
+
+	@Override
+	public void parse(Cursor cursor) throws SyntaxError {
 	}
 }
