@@ -2,6 +2,7 @@ package tk.valoeghese.nightwolf.compiler.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
@@ -43,35 +44,59 @@ public class VarDef extends Component {
 
 		// get next equals for value
 		Component.skipPast('=', cursor);
-
-		Component value = this.type.createValue();
-		value.tokenise(cursor);
-		this.addComponent(value);
+		this.addComponent(this.type.createValue(cursor));
 
 		// get next semicolon for end
 		Component.skipPast(';', cursor);
 	}
 
 	public static boolean isVarType(String name) {
+		// TODO allow classes. will probably require a rewrite.
+		// or a keyword ;)
+		// TODO tokenise [] -> Array{}
+
+		int l = name.length();
+
+		if (l > 2) { // a[] is the smallest length of array type: 3
+			if (name.substring(l - 2, l).equals("[]")) {
+				return REVERSE_TYPE.containsKey(name.substring(0, l - 2));
+			}
+		}
+
 		return REVERSE_TYPE.containsKey(name);
 	}
 
 	private static final Map<String, Type> REVERSE_TYPE = new HashMap<>();
 
 	public static enum Type {
-		FUNC("func", FuncValue::new); //TODO actual func value
+		FUNC("func", FuncValue::new),
+		VAR("var", cursor -> {
+			InferencedType component = new InferencedType();
+			component.tokenise(cursor);
+			return component.getTrueType();
+		}),
+		VAL("val", cursor -> new Immutable(VAR.createValue(cursor))),
+		SEQ("seq", Sequence::new);
 
 		private Type(String name, Supplier<Component> factory) {
+			this(name, cursor -> {
+				Component c = factory.get();
+				c.tokenise(cursor);
+				return c;
+			});
+		}
+
+		private Type(String name, Function<Cursor, Component> factory) {
 			this.factory = factory;
 			this.name = name;
 			REVERSE_TYPE.put(name, this);
 		}
 
-		private final Supplier<Component> factory;
+		private final Function<Cursor, Component> factory;
 		private final String name;
 
-		public Component createValue() {
-			return this.factory.get();
+		public Component createValue(Cursor cursor) {
+			return this.factory.apply(cursor);
 		}
 	}
 }

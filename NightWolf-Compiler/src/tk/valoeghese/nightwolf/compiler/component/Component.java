@@ -126,7 +126,7 @@ public abstract class Component implements Iterable<Component> {
 		}
 
 		public boolean rewind() {
-			if (this.current > 0) {
+			if (this.current <= 0) {
 				return false;
 			}
 
@@ -183,12 +183,52 @@ public abstract class Component implements Iterable<Component> {
 	public static void skipPast(char target, Cursor cursor) {
 		char c = (char) ((int) target + 1);
 
-		for (; c != target;) {
+		while (c != target) {
 			c = cursor.advance();
 
 			if (c == '\u0000') {
 				throw SyntaxError.eof(cursor);
 			}
 		}
+	}
+
+	public static boolean skipPastEither(char falseTarget, char trueTarget, Cursor cursor) {
+		char c = (char) ((int) falseTarget + 1);
+
+		if (c == trueTarget) {
+			++c;
+		}
+
+		while (c != falseTarget && c != trueTarget) {
+			c = cursor.advance();
+
+			if (c == '\u0000') {
+				throw SyntaxError.eof(cursor);
+			}
+		}
+
+		return c == trueTarget;
+	}
+
+	public static boolean skipPastEitherOnlyWhitespace(char falseTarget, char trueTarget, Cursor cursor) {
+		char c;
+
+		while (true) {
+			c = cursor.advance();
+
+			if (c == falseTarget || c == trueTarget) {
+				break;
+			}
+
+			if (c == '\u0000') {
+				throw SyntaxError.eof(cursor);
+			}
+
+			if (!Character.isWhitespace(c)) {
+				throw SyntaxError.invalidCharacter(c, cursor);
+			}
+		}
+
+		return c == trueTarget;
 	}
 }

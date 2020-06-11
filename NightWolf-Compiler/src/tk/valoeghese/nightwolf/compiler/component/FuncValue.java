@@ -7,11 +7,22 @@ public class FuncValue extends Component {
 		super("FuncValue", true);
 	}
 
+	public Component getParameter() {
+		return this.getComponent(0);
+	}
+
+	public Component getSequence() {
+		return this.getComponent(1);
+	}
+
 	@Override
 	public void tokenise(Cursor cursor) throws SyntaxError {
 		this.reset();
 
-		// value tuple
+		// value (often, but not always, a struct). If not a struct, a value type.
+		InferencedType parameter = new InferencedType();
+		parameter.tokenise(cursor);
+		this.addComponent(parameter.getTrueType());
 
 		// apply operator
 
@@ -36,5 +47,8 @@ public class FuncValue extends Component {
 		}
 
 		// sequence
+		Sequence sequence = new Sequence();
+		sequence.tokenise(cursor);
+		this.addComponent(sequence);
 	}
 }
