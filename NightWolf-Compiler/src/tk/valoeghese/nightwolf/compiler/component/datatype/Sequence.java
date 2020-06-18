@@ -1,5 +1,8 @@
 package tk.valoeghese.nightwolf.compiler.component.datatype;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
 import tk.valoeghese.nightwolf.compiler.component.Expression;
@@ -12,29 +15,41 @@ public class Sequence extends Component {
 	@Override
 	public void tokenise(Cursor cursor) throws SyntaxError {
 		Component.skipPast('{', cursor);
-		StringBuilder sb = new StringBuilder();
-		char c;
-		String type;
 
-		while ((c = cursor.advance()) != '}') {
-			if (c == ';') {
-				// I could probably do it better than this but idk
-				type = sb.toString().trim();
+		while (cursor.advance() != '}') {
+			if (!Character.isWhitespace(c)) {
+				cursor.rewind(); // I added this hacky method and now use it all the time wtf
 
-				Expression expr = new Expression();
-				expr.tokenise(new Cursor(type.concat(";").toCharArray(), cursor.getLine(), false));
-				this.addComponent(expr);
-			} else if (c == '"') {
-				
-			} else if (Character.isWhitespace(c)) {
-				if (!(type = sb.toString()).isEmpty()) {
-
-				}
-
-				sb = new StringBuilder();
-			} else {
-				sb.append(c);
+				Line line = new Line();
+				line.tokenise(cursor);
+				this.addComponent(line);
 			}
 		}
+	}
+
+	public static class Line extends Component {
+		public Line() {
+			super("Line", true);
+		}
+
+		@Override
+		public void tokenise(Cursor cursor) throws SyntaxError {
+			StringBuilder sb = new StringBuilder();
+			char c;
+			char prev = '\u0000';
+			String type;
+			Cursor backup = new Cursor(cursor);
+			List<String> proto = new ArrayList<>();
+
+			// collect syntax structure via proto-tokens
+			while ((c = cursor.advance()) != ';') {
+				if (c == '}') {
+					throw SyntaxError.invalidCharacter(c, cursor);
+				}
+			}
+
+			// choose what this line represents from proto structure and properly tokenise it therewith
+		}
+
 	}
 }

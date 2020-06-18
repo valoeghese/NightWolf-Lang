@@ -106,12 +106,29 @@ public abstract class Component implements Iterable<Component> {
 			this.showColumn = showColumn;
 		}
 
+		public Cursor(Cursor cursor) {
+			this.text = cursor.text;
+			this.line = cursor.getLine();
+			this.column = cursor.getColumn();
+			this.showColumn = cursor.showColumn;
+			this.current = cursor.current;
+			this.edits.addAll(cursor.edits);
+		}
+
 		private int line;
 		private int column = 1;
 		private int current = 0;
 		private Stack<Integer> edits = new Stack<>();
 		private final char[] text;
 		private final boolean showColumn;
+
+		public void resetTo(Cursor backup) {
+			this.line = backup.line;
+			this.column = backup.column;
+			this.current = backup.current;
+			this.edits = new Stack<>();
+			this.edits.addAll(backup.edits);
+		}
 
 		public char advance() throws SyntaxError {
 			try {
