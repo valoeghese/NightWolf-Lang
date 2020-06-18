@@ -7,11 +7,11 @@ public class SyntaxError extends RuntimeException {
 	private static final long serialVersionUID = -8909798216502250264L;
 
 	public SyntaxError(String message, Cursor cursor) {
-		this(message, cursor.getLine(), cursor.getColumn());
+		this(message, cursor.getLine(), cursor.getColumn(), cursor.showColumn());
 	}
 
-	public SyntaxError(String message, int line, int column) {
-		super(message + " [line " + String.valueOf(line) + ", column " + String.valueOf(column) + "]");
+	protected SyntaxError(String message, int line, int column, boolean showColumn) {
+		super(message + " [line " + String.valueOf(line) + (showColumn ? (", column " + String.valueOf(column)) : "") + "]");
 	}
 
 	public static SyntaxError eof(Cursor cursor) {

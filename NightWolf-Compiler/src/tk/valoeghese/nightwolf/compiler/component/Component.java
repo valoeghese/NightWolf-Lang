@@ -97,14 +97,21 @@ public abstract class Component implements Iterable<Component> {
 
 	public static class Cursor {
 		public Cursor(char[] text) {
-			this.text = text;
+			this(text, 1, true);
 		}
 
-		private int line = 1;
+		public Cursor(char[] text, int line, boolean showColumn) {
+			this.text = text;
+			this.line = line;
+			this.showColumn = showColumn;
+		}
+
+		private int line;
 		private int column = 1;
 		private int current = 0;
 		private Stack<Integer> edits = new Stack<>();
 		private final char[] text;
+		private final boolean showColumn;
 
 		public char advance() throws SyntaxError {
 			try {
@@ -148,6 +155,10 @@ public abstract class Component implements Iterable<Component> {
 			}
 
 			return true;
+		}
+
+		public boolean showColumn() {
+			return this.showColumn;
 		}
 
 		public int getLine() {
