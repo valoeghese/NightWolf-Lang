@@ -1,4 +1,4 @@
-package tk.valoeghese.nightwolf.compiler.component;
+package tk.valoeghese.nightwolf.compiler.component.datatype;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
+import tk.valoeghese.nightwolf.compiler.component.Component;
 
 public class VarDef extends Component {
 	public VarDef(String type) {
@@ -50,7 +51,7 @@ public class VarDef extends Component {
 		Component.skipPast(';', cursor);
 	}
 
-	public static boolean isVarType(String name) {
+	public static boolean isPrimitiveOrArrayType(String name) {
 		// TODO allow classes. will probably require a rewrite.
 		// or a keyword ;)
 		// TODO tokenise [] -> Array{}

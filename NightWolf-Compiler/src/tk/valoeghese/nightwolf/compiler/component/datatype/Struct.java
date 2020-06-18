@@ -1,6 +1,7 @@
-package tk.valoeghese.nightwolf.compiler.component;
+package tk.valoeghese.nightwolf.compiler.component.datatype;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
+import tk.valoeghese.nightwolf.compiler.component.Component;
 
 public class Struct extends Component {
 	public Struct() {
@@ -30,6 +31,7 @@ public class Struct extends Component {
 		Type type = null;
 		StringBuilder sb = new StringBuilder();
 		String cachedVarType = null;
+		String initial = null;
 
 		mainLoop: while (true) {
 			char c = cursor.advance();
@@ -42,30 +44,48 @@ public class Struct extends Component {
 				String value = sb.toString();
 
 				if (!value.isEmpty()) {
-					if (VarDef.isVarType(value)) {
-						// Must be template
-						if (type == Type.OBJECT) {
-							throw SyntaxError.unexpectedToken(value, cursor);
+					if (type == null) {
+						if (cachedVarType != null || isComma || isEnd) {
+							if (cachedVarType == null) {
+								this.addData(value);
+								type = Type.OBJECT;
+							} else {
+								this.addData(cachedVarType);
+								this.addData(value);
+								type = Type.TEMPLATE;
+							}
+
+							if (!isComma) {
+								if (isEnd || Component.skipPastEitherOnlyWhitespace(',', ')', cursor)) {
+									break mainLoop;
+								}
+							}
+						} else {
+							cachedVarType = value;
 						}
 
-						type = Type.TEMPLATE;
-						cachedVarType = value;
 						sb = new StringBuilder();
-					} else if (type != Type.TEMPLATE) {
+					} else if (type == Type.TEMPLATE) {
+						if (initial != null || isComma || isEnd) {
+							this.addData(initial == null ? cachedVarType : (cachedVarType = initial));
+							this.addData(value);
+							sb = new StringBuilder();
+
+							if (!isComma) {
+								if (isEnd || Component.skipPastEitherOnlyWhitespace(',', ')', cursor)) {
+									break mainLoop;
+								}
+							}
+
+							initial = null;
+						} else {
+							initial = value;
+						}
+
+						sb = new StringBuilder();
+					} else {
 						// Must be object
 						type = Type.OBJECT;
-						this.addData(value);
-						sb = new StringBuilder();
-
-						if (!isComma) {
-							if (isEnd || Component.skipPastEitherOnlyWhitespace(',', ')', cursor)) {
-								break mainLoop;
-							}
-						}
-					} else {
-						// Must be template and thus must have gone through the cachedType setting loop.
-						// Use cachedType.
-						this.addData(cachedVarType);
 						this.addData(value);
 						sb = new StringBuilder();
 

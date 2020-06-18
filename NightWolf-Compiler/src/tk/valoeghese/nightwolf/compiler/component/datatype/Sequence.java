@@ -1,6 +1,7 @@
-package tk.valoeghese.nightwolf.compiler.component;
+package tk.valoeghese.nightwolf.compiler.component.datatype;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
+import tk.valoeghese.nightwolf.compiler.component.Component;
 
 public class Sequence extends Component {
 	public Sequence() {

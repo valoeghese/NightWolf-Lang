@@ -10,7 +10,7 @@ import tk.valoeghese.common.ArgsData;
 import tk.valoeghese.common.ArgsParser;
 import tk.valoeghese.common.IProgramArgs;
 import tk.valoeghese.common.util.FileUtils;
-import tk.valoeghese.nightwolf.compiler.component.VarDef;
+import tk.valoeghese.nightwolf.compiler.component.datatype.VarDef;
 
 public final class CompilerMain implements IProgramArgs, Runnable {
 	public File sourceFile;

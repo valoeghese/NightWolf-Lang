@@ -114,7 +114,7 @@ public abstract class Component implements Iterable<Component> {
 					++this.line;
 					this.edits.push(this.column);
 					this.column = 1;
-				} else if (Character.isISOControl(c)) {
+				} else if (!Character.isISOControl(c)) {
 					++this.column;
 					this.edits.push(0);
 				}
@@ -131,8 +131,10 @@ public abstract class Component implements Iterable<Component> {
 			}
 
 			--this.current;
+			System.out.println(this.text[this.current] == '\n');
 
 			int edit = this.edits.pop();
+			System.out.println(edit);
 
 			if (edit == 0) {
 				this.column--;

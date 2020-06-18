@@ -5,3 +5,7 @@ using core.system;
 func main = (val[] args) -> {
 	"Hello, World!" -> system.println;
 };
+
+func other = (val a, otherargs, int x, y, z) -> {
+	x;
+};
