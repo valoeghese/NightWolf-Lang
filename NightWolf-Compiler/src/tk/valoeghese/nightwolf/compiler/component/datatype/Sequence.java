@@ -12,6 +12,24 @@ public class Sequence extends Component {
 	public void tokenise(Cursor cursor) throws SyntaxError {
 		// TODO implement actual sequence tokeniser
 		Component.skipPast('{', cursor);
-		Component.skipPast('}', cursor);
+		StringBuilder sb = new StringBuilder();
+		char c;
+		String type;
+
+		while ((c = cursor.advance()) != '}') {
+			if (c == ';') {
+				type = sb.toString().trim();
+
+				if (type.isEmpty()) {
+					
+				}
+			} else if (Character.isWhitespace(c)) {
+				if (!(type = sb.toString()).isEmpty()) {
+					
+				}
+			} else {
+				sb.append(c);
+			}
+		}
 	}
 }
