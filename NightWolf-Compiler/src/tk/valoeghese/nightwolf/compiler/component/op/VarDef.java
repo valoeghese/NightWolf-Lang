@@ -1,4 +1,4 @@
-package tk.valoeghese.nightwolf.compiler.component.datatype;
+package tk.valoeghese.nightwolf.compiler.component.op;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,10 +7,14 @@ import java.util.function.Supplier;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
+import tk.valoeghese.nightwolf.compiler.component.datatype.FuncValue;
+import tk.valoeghese.nightwolf.compiler.component.datatype.Immutable;
+import tk.valoeghese.nightwolf.compiler.component.datatype.InferencedType;
+import tk.valoeghese.nightwolf.compiler.component.datatype.Sequence;
 
-public class VarDef extends Component {
+public class VarDef extends Assign {
 	public VarDef(String type) {
-		super("VarDef", true);
+		super("VarDef", 2);
 		this.type = REVERSE_TYPE.get(type);
 	}
 
@@ -51,7 +55,7 @@ public class VarDef extends Component {
 		Component.skipPast(';', cursor);
 	}
 
-	public static boolean isPrimitiveOrArrayType(String name) {
+	/*public static boolean isPrimitiveOrArrayType(String name) {
 		// TODO allow classes. will probably require a rewrite.
 		// or a keyword ;)
 		// TODO tokenise [] -> Array{}
@@ -65,7 +69,7 @@ public class VarDef extends Component {
 		}
 
 		return REVERSE_TYPE.containsKey(name);
-	}
+	}*/
 
 	private static final Map<String, Type> REVERSE_TYPE = new HashMap<>();
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import tk.valoeghese.nightwolf.compiler.component.Component;
 import tk.valoeghese.nightwolf.compiler.component.ImportDef;
 import tk.valoeghese.nightwolf.compiler.component.PackageDef;
-import tk.valoeghese.nightwolf.compiler.component.datatype.VarDef;
+import tk.valoeghese.nightwolf.compiler.component.op.VarDef;
 
 public final class NightWolfProgram extends Component {
 	public NightWolfProgram(String fileData) {
@@ -55,13 +55,9 @@ public final class NightWolfProgram extends Component {
 					if (!head) {
 						switch (type) {
 						default:
-							if (VarDef.isPrimitiveOrArrayType(type)) {
-								VarDef variable = new VarDef(type);
-								variable.tokenise(cursor);
-								this.addComponent(variable);
-							} else {
-								throw SyntaxError.unexpectedToken(type, cursor);
-							}
+							VarDef variable = new VarDef(type);
+							variable.tokenise(cursor);
+							this.addComponent(variable);
 							break;
 						}
 					}

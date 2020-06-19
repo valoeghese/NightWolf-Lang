@@ -5,7 +5,10 @@ import java.util.List;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
-import tk.valoeghese.nightwolf.compiler.component.ComponentDummy;
+import tk.valoeghese.nightwolf.compiler.component.Expression;
+import tk.valoeghese.nightwolf.compiler.component.LiteralProtoComponent;
+import tk.valoeghese.nightwolf.compiler.component.NoOp;
+import tk.valoeghese.nightwolf.compiler.component.op.Assign;
 import tk.valoeghese.nightwolf.compiler.component.op.ProtoComponent;
 
 public class Sequence extends Component {
@@ -15,6 +18,7 @@ public class Sequence extends Component {
 
 	@Override
 	public void tokenise(Cursor cursor) throws SyntaxError {
+		this.reset();
 		Component.skipPast('{', cursor);
 		char c;
 
@@ -24,7 +28,7 @@ public class Sequence extends Component {
 
 				Line line = new Line();
 				line.tokenise(cursor);
-				this.addComponent(line);
+				this.addComponent(line.getTrueComponent());
 			}
 		}
 	}
@@ -34,30 +38,42 @@ public class Sequence extends Component {
 			super("Line", true);
 		}
 
+		public Component getTrueComponent() {
+			return this.getComponent(0);
+		}
+
 		@Override
 		public void tokenise(Cursor cursor) throws SyntaxError {
+			this.reset();
 			StringBuilder sb = new StringBuilder();
 			char c;
-			char prev = '\u0000';
-			String type;
-			Cursor backup = new Cursor(cursor); // will I even use this
 			List<Component> proto = new ArrayList<>();
 
 			// collect syntax structure via proto-tokens
 			while ((c = cursor.advance()) != ';') {
 				if (Character.isWhitespace(c)) {
-					proto.add(new ComponentDummy(sb.toString()));
+					sb.append(' ');
 				} else {
 					switch (c) {
 					case '}':
 						throw SyntaxError.invalidCharacter(c, cursor);
 					case '"':
+						// ### Dump ###
+						if (dump(sb, proto)) {
+							sb = new StringBuilder();
+						}
+
 						StringValue str = new StringValue();
 						str.tokenise(cursor);
 						proto.add(str);
 						break;
 					case '-':
 						if (cursor.advance() == '>') {
+							// ### Dump ###
+							if (dump(sb, proto)) {
+								sb = new StringBuilder();
+							}
+
 							proto.add(ProtoComponent.APPLY);
 						} else {
 							cursor.rewind();
@@ -65,6 +81,11 @@ public class Sequence extends Component {
 						}
 						break;
 					case '=':
+						// ### Dump ###
+						if (dump(sb, proto)) {
+							sb = new StringBuilder();
+						}
+
 						proto.add(ProtoComponent.ASSIGN);
 						break;
 					default:
@@ -74,8 +95,52 @@ public class Sequence extends Component {
 				}
 			}
 
+			// ### Dump ###
+			if (dump(sb, proto)) {
+				sb = new StringBuilder();
+			}
+
+			//			for (Component co : proto) {
+			//				this.addComponent(co);
+			//			}
+
 			// choose what this line represents from proto structure and properly tokenise it therewith
+			switch (proto.size()) {
+			case 0: // no expression
+				this.addComponent(new NoOp());
+				break;
+			case 1:
+				if (proto.get(0) instanceof LiteralProtoComponent) {
+					Expression expression = new Expression();
+					expression.tokenise(new Cursor(((LiteralProtoComponent) proto.get(0)).value.concat(";").toCharArray(), cursor.getLine()));
+					this.addComponent(expression);
+					break;
+				} else {
+					throw new SyntaxError("Unable to tokenise line!", cursor.getLine());
+				}
+			case 3:
+				Component centre = proto.get(1);
+
+				if (centre == ProtoComponent.ASSIGN) {
+					this.addComponent(Assign.assignOrNew(cursor.getLine(), proto));
+					break;
+				} else if (centre == ProtoComponent.APPLY) {
+					// calling a method probably
+					this.addComponent(new NoOp());
+					break;
+				}
+			default:
+				throw new SyntaxError("Unable to tokenise line!", cursor.getLine());
+			}
 		}
 
+		private static boolean dump(StringBuilder sb, List<Component> proto) {
+			if (!sb.toString().trim().isEmpty()) {
+				proto.add(new LiteralProtoComponent(sb.toString().trim()));
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

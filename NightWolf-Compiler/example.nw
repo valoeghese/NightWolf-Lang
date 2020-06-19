@@ -7,5 +7,6 @@ func main = (val[] args) -> {
 };
 
 func other = (val a, otherargs, int x, y, z) -> {
-	x * y + z;
+	var n = y * z + x * z;
+	x * n + z;
 };

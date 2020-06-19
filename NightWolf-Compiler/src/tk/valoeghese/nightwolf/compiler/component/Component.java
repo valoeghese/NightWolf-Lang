@@ -100,7 +100,11 @@ public abstract class Component implements Iterable<Component> {
 			this(text, 1, true);
 		}
 
-		public Cursor(char[] text, int line, boolean showColumn) {
+		public Cursor(char[] text, int line) {
+			this(text, line, false);
+		}
+
+		private Cursor(char[] text, int line, boolean showColumn) {
 			this.text = text;
 			this.line = line;
 			this.showColumn = showColumn;

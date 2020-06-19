@@ -18,6 +18,7 @@ public class Expression extends Component {
 
 	@Override
 	public void tokenise(Cursor cursor) throws SyntaxError {
+		this.reset();
 		// TODO implement this.
 		Component.skipPast(';', cursor);
 		// first take to get parts

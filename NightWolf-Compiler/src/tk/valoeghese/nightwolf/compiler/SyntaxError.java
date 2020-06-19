@@ -10,6 +10,10 @@ public class SyntaxError extends RuntimeException {
 		this(message, cursor.getLine(), cursor.getColumn(), cursor.showColumn());
 	}
 
+	public SyntaxError(String message, int line) {
+		this(message, line, 0, false);
+	}
+
 	protected SyntaxError(String message, int line, int column, boolean showColumn) {
 		super(message + " [line " + String.valueOf(line) + (showColumn ? (", column " + String.valueOf(column)) : "") + "]");
 	}
