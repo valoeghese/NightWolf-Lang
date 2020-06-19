@@ -5,10 +5,12 @@ import java.util.List;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
+import tk.valoeghese.nightwolf.compiler.component.CompoundedComponent;
 import tk.valoeghese.nightwolf.compiler.component.Expression;
 import tk.valoeghese.nightwolf.compiler.component.LiteralProtoComponent;
 import tk.valoeghese.nightwolf.compiler.component.NoOp;
 import tk.valoeghese.nightwolf.compiler.component.op.Assign;
+import tk.valoeghese.nightwolf.compiler.component.op.FuncInvoke;
 import tk.valoeghese.nightwolf.compiler.component.op.ProtoComponent;
 
 public class Sequence extends Component {
@@ -111,7 +113,7 @@ public class Sequence extends Component {
 				break;
 			case 1:
 				if (proto.get(0) instanceof LiteralProtoComponent) {
-					Expression expression = new Expression();
+					Component expression = new Expression();
 					expression.tokenise(new Cursor(((LiteralProtoComponent) proto.get(0)).value.concat(";").toCharArray(), cursor.getLine()));
 					this.addComponent(expression);
 					break;
@@ -126,7 +128,9 @@ public class Sequence extends Component {
 					break;
 				} else if (centre == ProtoComponent.APPLY) {
 					// calling a method probably
-					this.addComponent(new NoOp());
+					CompoundedComponent invoke = new FuncInvoke();
+					invoke.compound(cursor.getLine(), proto);
+					this.addComponent(invoke);
 					break;
 				}
 			default:
