@@ -5,6 +5,8 @@ import java.util.List;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
+import tk.valoeghese.nightwolf.compiler.component.ComponentDummy;
+import tk.valoeghese.nightwolf.compiler.component.op.ProtoComponent;
 
 public class Sequence extends Component {
 	public Sequence() {
@@ -43,19 +45,31 @@ public class Sequence extends Component {
 
 			// collect syntax structure via proto-tokens
 			while ((c = cursor.advance()) != ';') {
-				switch (c) {
-				case '}':
-					throw SyntaxError.invalidCharacter(c, cursor);
-				case '"':
-					StringValue str = new StringValue();
-					str.tokenise(cursor);
-					proto.add(str);
-					break;
-				case '-':
-					if (cursor.advance() == '>') {
-						
-					} else {
-						cursor.rewind();
+				if (Character.isWhitespace(c)) {
+					proto.add(new ComponentDummy(sb.toString()));
+				} else {
+					switch (c) {
+					case '}':
+						throw SyntaxError.invalidCharacter(c, cursor);
+					case '"':
+						StringValue str = new StringValue();
+						str.tokenise(cursor);
+						proto.add(str);
+						break;
+					case '-':
+						if (cursor.advance() == '>') {
+							proto.add(ProtoComponent.APPLY);
+						} else {
+							cursor.rewind();
+							sb.append(c);
+						}
+						break;
+					case '=':
+						proto.add(ProtoComponent.ASSIGN);
+						break;
+					default:
+						sb.append(c);
+						break;
 					}
 				}
 			}

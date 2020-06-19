@@ -1,14 +1,14 @@
 package tk.valoeghese.nightwolf.compiler.component;
 
-import tk.valoeghese.nightwolf.compiler.SyntaxError;
+import tk.valoeghese.nightwolf.compiler.component.op.ProtoComponent;
 
-public class ComponentDummy extends Component {
+public class ComponentDummy extends ProtoComponent {
 	public ComponentDummy(String value) {
-		super("Dummy", false);
+		super("Dummy");
+
+		this.addData(value);
+		this.value = value;
 	}
 
-	@Override
-	public void tokenise(Cursor cursor) throws SyntaxError {
-		throw new UnsupportedOperationException("Cannot Tokenise on a Dummy Component!");
-	}
+	public final String value;
 }
