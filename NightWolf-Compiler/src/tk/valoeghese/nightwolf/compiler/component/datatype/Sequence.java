@@ -5,7 +5,6 @@ import java.util.List;
 
 import tk.valoeghese.nightwolf.compiler.SyntaxError;
 import tk.valoeghese.nightwolf.compiler.component.Component;
-import tk.valoeghese.nightwolf.compiler.component.Expression;
 
 public class Sequence extends Component {
 	public Sequence() {
@@ -15,8 +14,9 @@ public class Sequence extends Component {
 	@Override
 	public void tokenise(Cursor cursor) throws SyntaxError {
 		Component.skipPast('{', cursor);
+		char c;
 
-		while (cursor.advance() != '}') {
+		while ((c = cursor.advance()) != '}') {
 			if (!Character.isWhitespace(c)) {
 				cursor.rewind(); // I added this hacky method and now use it all the time wtf
 
@@ -38,13 +38,25 @@ public class Sequence extends Component {
 			char c;
 			char prev = '\u0000';
 			String type;
-			Cursor backup = new Cursor(cursor);
-			List<String> proto = new ArrayList<>();
+			Cursor backup = new Cursor(cursor); // will I even use this
+			List<Component> proto = new ArrayList<>();
 
 			// collect syntax structure via proto-tokens
 			while ((c = cursor.advance()) != ';') {
-				if (c == '}') {
+				switch (c) {
+				case '}':
 					throw SyntaxError.invalidCharacter(c, cursor);
+				case '"':
+					StringValue str = new StringValue();
+					str.tokenise(cursor);
+					proto.add(str);
+					break;
+				case '-':
+					if (cursor.advance() == '>') {
+						
+					} else {
+						cursor.rewind();
+					}
 				}
 			}
 
