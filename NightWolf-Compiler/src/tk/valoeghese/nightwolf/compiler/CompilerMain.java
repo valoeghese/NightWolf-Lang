@@ -1,4 +1,4 @@
-package tk.valoeghese.nightwolf.compiler.component;
+package tk.valoeghese.nightwolf.compiler;
 
 import java.io.File;
 
@@ -11,8 +11,7 @@ public class CompilerMain implements IProgramArgs, Runnable {
 
 	@Override
 	public void run() {
-		// TODO
-
+		
 	}
 
 	@Override
