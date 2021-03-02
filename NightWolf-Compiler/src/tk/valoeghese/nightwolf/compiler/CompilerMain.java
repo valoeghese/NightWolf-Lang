@@ -22,7 +22,7 @@ public class CompilerMain implements IProgramArgs, Runnable {
 
 		Tokeniser tokeniser = new Tokeniser()
 				.then("\".+(?<!\\\\)\"", Token.STRING_VALUE) // ".+(?<!\\)"
-				.then("\\(|;|,|\\[|\\]|\\)|\\{|\\}", Token.STRUCTURE_TOKEN) // \(|;|,|\[|\]|\)|\{|\}
+				.then("\\(|;|,|\\[|\\]|\\)|\\{|\\}|\\.", Token.STRUCTURE_TOKEN) // \(|;|,|\[|\]|\)|\{|\}|\.
 				.then("!=|==|>=|<=", Token.COMPARISON_BINARY_OPERATOR) // !=|==|>=|<=
 				.then("=|->", Token.RELATION_TOKEN) // =|->
 				.then("\\*|/", Token.MD_BINARY_OPERATOR) // \*|/

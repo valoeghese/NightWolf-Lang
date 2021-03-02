@@ -11,7 +11,7 @@ public class Tokeniser {
 	private final List<TokenMatcher> patterns = new ArrayList<>();
 
 	public Tokeniser then(String regex, int token) {
-		this.patterns.add(new TokenMatcher(Pattern.compile(regex), token));
+		this.patterns.add(new TokenMatcher(Pattern.compile("^(" + regex + ")"), token));
 		return this;
 	}
 
@@ -29,7 +29,7 @@ public class Tokeniser {
 				}
 			}
 
-			throw new RuntimeException("Unexpected character in source!\n> " + input.charAt(0) + "< " + (input.length() > 1 ? input.substring(1) : ""));
+			throw new RuntimeException("Unexpected character in source!\n> " + input.charAt(0) + " < " + (input.length() > 1 ? input.substring(1) : ""));
 		}
 
 		return result;
