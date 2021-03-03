@@ -18,14 +18,14 @@ public class Tokeniser {
 	public Queue<Token> tokenise(String input) {
 		Queue<Token> result = new LinkedList<>();
 
-		while (input != "") {
+		sequence: while (input != "") {
 			for (TokenMatcher pattern : this.patterns) {
 				Matcher m = pattern.regex.matcher(input);
 
 				if (m.find()) {
 					result.add(pattern.create(m.group().trim()));
 					input = m.replaceFirst("").stripLeading(); // Who needs whitespace anyway
-					break;
+					continue sequence;
 				}
 			}
 
