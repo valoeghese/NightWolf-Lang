@@ -30,7 +30,7 @@ public class CompilerMain implements IProgramArgs, Runnable {
 				.then("\\||&|!", Token.BOOLEAN_BINARY_OPERATOR) // \||&|!
 				.then("<|>", Token.COMPARISON_BINARY_OPERATOR) // <|>
 				.then("[0-9]+", Token.NUMERIC_VALUE) // [0-9]+
-				.then("[A-z]([A-z]|[0-9])*", Token.STRING_LITERAL); // [A-z]([A-z]|[0-9])+
+				.then("([A-Z]|[a-z])([A-Z]|[a-z]|[0-9])*", Token.STRING_LITERAL); // ([A-Z]|[a-z])([A-Z]|[a-z]|[0-9])*
 
 		// TODO run process in parallel
 		if (this.sourceFile.isDirectory()) {
