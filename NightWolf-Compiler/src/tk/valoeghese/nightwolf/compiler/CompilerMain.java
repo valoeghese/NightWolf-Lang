@@ -14,7 +14,7 @@ import tk.valoeghese.nightwolf.compiler.token.Tokeniser;
 
 public class CompilerMain implements IProgramArgs, Runnable {
 	public File sourceFile;
-	private static File binFile = new File("bin");
+	private static File binFile;
 
 	@Override
 	public void run() {
@@ -61,6 +61,8 @@ public class CompilerMain implements IProgramArgs, Runnable {
 		this.sourceFile = new File(data.getString("src", () -> {
 			throw new RuntimeException("Must specify a source file/folder! (-src <file>)");
 		}));
+
+		binFile = new File(data.getStringOrDefault("out", "bin"));
 	}
 
 	public static void main(String[] args) {
