@@ -53,7 +53,7 @@ public class CompilerMain implements IProgramArgs, Runnable {
 	}
 
 	private static void compile(Tokeniser tokeniser, String fileData) {
-		System.out.println(tokeniser.tokenise(fileData));
+		tokeniser.tokenise(fileData).forEach(System.out::println);
 	}
 
 	@Override
