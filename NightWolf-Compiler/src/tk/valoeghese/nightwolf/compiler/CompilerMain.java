@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.util.Queue;
 
 import tk.valoeghese.common.ArgsData;
 import tk.valoeghese.common.ArgsParser;
@@ -53,7 +54,9 @@ public class CompilerMain implements IProgramArgs, Runnable {
 	}
 
 	private static void compile(Tokeniser tokeniser, String fileData) {
-		tokeniser.tokenise(fileData).forEach(System.out::println);
+		Queue<Token> tokens = tokeniser.tokenise(fileData);
+		
+		
 	}
 
 	@Override
