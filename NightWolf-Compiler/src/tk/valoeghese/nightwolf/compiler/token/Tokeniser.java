@@ -16,6 +16,8 @@ public class Tokeniser {
 	}
 
 	public Queue<Token> tokenise(String input) {
+		input = input.replace('\r', '\n'); // Regex can't handle it for some reason
+
 		Queue<Token> result = new LinkedList<>();
 
 		sequence: while (input != "") {
@@ -23,7 +25,10 @@ public class Tokeniser {
 				Matcher m = pattern.regex.matcher(input);
 
 				if (m.find()) {
-					result.add(pattern.create(m.group().trim()));
+					if (pattern.token != Token.NONE) {
+						result.add(pattern.create(m.group().trim()));
+					}
+
 					input = m.replaceFirst("").stripLeading(); // Who needs whitespace anyway
 					continue sequence;
 				}

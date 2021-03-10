@@ -14,6 +14,7 @@ public class Token {
 		return this.type + "\t" + this.data;
 	}
 
+	public static final int NONE = -1;
 	public static final int STRING_LITERAL = 0;
 	public static final int NUMERIC_VALUE = 1;
 	public static final int STRING_VALUE = 2;

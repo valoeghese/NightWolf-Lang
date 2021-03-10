@@ -22,11 +22,12 @@ public class CompilerMain implements IProgramArgs, Runnable {
 		binFile.mkdir();
 
 		Tokeniser tokeniser = new Tokeniser()
+				.then("\\/\\/.*\n", Token.NONE) // COMMENT \/\/.*\n
 				.then("\".+(?<!\\\\)\"", Token.STRING_VALUE) // ".+(?<!\\)"
 				.then("\\(|;|,|\\[|\\]|\\)|\\{|\\}|\\.", Token.STRUCTURE_TOKEN) // \(|;|,|\[|\]|\)|\{|\}|\.
 				.then("!=|==|>=|<=", Token.COMPARISON_BINARY_OPERATOR) // !=|==|>=|<=
 				.then("=|->", Token.RELATION_TOKEN) // =|->
-				.then("\\*|/", Token.MD_BINARY_OPERATOR) // \*|/
+				.then("\\*|\\/", Token.MD_BINARY_OPERATOR) // \*|/
 				.then("\\+|-", Token.AS_BINARY_OPERATOR) // \+|-
 				.then("\\||&|!", Token.BOOLEAN_BINARY_OPERATOR) // \||&|!
 				.then("<|>", Token.COMPARISON_BINARY_OPERATOR) // <|>
@@ -56,7 +57,7 @@ public class CompilerMain implements IProgramArgs, Runnable {
 	private static void compile(Tokeniser tokeniser, String fileData) {
 		Queue<Token> tokens = tokeniser.tokenise(fileData);
 		
-		
+		tokens.forEach(System.out::println);
 	}
 
 	@Override

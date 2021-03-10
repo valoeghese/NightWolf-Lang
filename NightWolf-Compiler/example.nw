@@ -1,9 +1,10 @@
 package tk.valoeghese;
 
-using core.system;
+// using core.system; || system.println
+using java.lang.System;
 
 func main = (val[] args) -> {
-	"Hello, World!" -> system.println;
+	"Hello, World!" -> System.out.println;
 };
 
 func other = (val a, otherargs, int x, y, z) -> {
